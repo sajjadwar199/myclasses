@@ -1,5 +1,5 @@
 <?php  
-require 'classes/database.php' ;
+require 'database.php' ;
 class validation extends database{
   
 //==========================================
@@ -10,7 +10,7 @@ class validation extends database{
 
 public  function protection_input($input)
 {
-   $protect=$this->escape_string(strip_tags(htmlentities(trim($input)))) ;
+   $protect=$this->escape_string(strip_tags(htmlentities(trim(@$input)))) ;
 
     return $protect;
     }
@@ -18,13 +18,17 @@ public  function protection_input($input)
     public  static function empty_valid($input,$error)
     {
     
-            if (empty($input)) {
+            if ($input =='') {
             ?>
-<div style='text-align:right' class='alert alert-danger'>
-<?php  echo $error;  ?>
-</div>
+<h5 style='color:red;'>
+<?php  echo $error;          ?>
+</h5>
 
             <?php 
+
+return false;
+            }else{
+                return true;
             }
            
         }
@@ -42,7 +46,10 @@ public  function protection_input($input)
 </div>
 
             <?php 
-        } 
+            return false;
+        } else{
+            return true;
+        }
     
     }
     
@@ -56,7 +63,9 @@ public  function protection_input($input)
 </div>
 
             <?php 
-        
+       return false; 
+    }else{
+        return true;
     }
 }
     public static function english_char_valid($input,$error)
@@ -69,7 +78,9 @@ public  function protection_input($input)
                 </div>
                 
                             <?php 
-
+return false;
+            }else{
+                return true;
             }
             
 
