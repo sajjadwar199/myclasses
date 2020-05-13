@@ -3,7 +3,7 @@ class database{
  private $localhost='localhost';
  private $username='root';
  private $password='';
- private $database='a';
+ private $database='pos';
 
  protected $connection;
 
@@ -20,7 +20,7 @@ class database{
      return $con;
  }
 
-public function escape_string($value)
+public  function escape_string($value)
 {
     $c = new main;
     $conn = $c->connect();
@@ -28,13 +28,13 @@ public function escape_string($value)
 }
 
 
-public static function insert($table_name,$assoc_array,$successmsg=null){
+public  function insert($table_name,$assoc_array,$successmsg=null){
 
     $keys = array();
-    $values = array();
+    $values= array();
     foreach($assoc_array as $key => $value){
         $keys[] = $key;
-        $values[] =strip_tags(htmlentities($_POST[$value])) ;
+        $values[] =$this->escape_string(strip_tags(htmlentities($_POST[$value]))) ;
     }
     $query = "INSERT INTO `$table_name`(`".implode("`,`", $keys)."`) VALUES('".implode("','", $values)."')";
     $c = new database;
@@ -42,6 +42,11 @@ public static function insert($table_name,$assoc_array,$successmsg=null){
     $q=  mysqli_query($conn,$query);
     if($q){
     $_SESSION['success_message']=$successmsg;
+    echo  '     <script>
+    if ( window.history.replaceState ) {
+      window.history.replaceState( null, null, window.location.href );
+    }
+    </script>';
   }else{
     $_SESSION['error_massage'] = 'هناك خطا  ';
 
@@ -58,6 +63,11 @@ public static function update($table,$where,$set,$successmsg=null){
 
   if($q){
     $_SESSION['success_message']=$successmsg;
+    echo '     <script>
+    if ( window.history.replaceState ) {
+      window.history.replaceState( null, null, window.location.href );
+    }
+    </script>';
   }else{
     $_SESSION['error_massage'] = 'هناك خطا  ';
 
@@ -74,6 +84,11 @@ public static function delete($table,$idname,$id,$successmsg){
     $conn = $c->connect();
       $q= mysqli_query($conn,$query);
        if($q){
+        echo '     <script>
+        if ( window.history.replaceState ) {
+          window.history.replaceState( null, null, window.location.href );
+        }
+        </script>';
         $_SESSION['success_message']=$successmsg;
       }else{
         $_SESSION['error_massage'] = 'هناك خطا  ';
