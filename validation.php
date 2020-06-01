@@ -15,16 +15,16 @@ public  function protection_input($input)
     return $protect;
     }
 
-    public  static function empty_valid($input,$error)
+    public   function empty_valid($input,$error)
     {
     
-            if ($input =='') {
-            ?>
-<h5 style='color:red;'>
-<?php  echo $error;          ?>
-</h5>
-
-            <?php 
+            if ($this->protection_input($input) =='') {
+                ?>
+                <div style='text-align:right' class='alert alert-danger'>
+                <?php  echo $error;  ?>
+                </div>
+                
+                            <?php 
 
 return false;
             }else{
@@ -35,11 +35,11 @@ return false;
     
     
     
-    public static function number_valid($number,$error)
+    public  function number_valid($number,$error)
     {
      
        
-        if (!preg_match("/^[0-9]+$/", $number)) {    
+        if (!preg_match("/^[0-9]+$/", $this->protection_input($number))) {    
             ?>
 <div style='text-align:right' class='alert alert-danger'>
 <?php  echo $error;  ?>
@@ -53,10 +53,10 @@ return false;
     
     }
     
-    public  static function email_valid($email,$error)
+    public   function email_valid($email,$error)
     {
         //if (preg_match("/^[_a-z0-9-+]+(\.[_a-z0-9-+]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/", $email)) {
-        if (!@filter_var($email, FILTER_VALIDATE_EMAIL)) {    
+        if (!@filter_var($this->protection_input($email), FILTER_VALIDATE_EMAIL)) {    
             ?>
 <div style='text-align:right' class='alert alert-danger'>
 <?php  echo $error;  ?>
@@ -68,10 +68,10 @@ return false;
         return true;
     }
 }
-    public static function english_char_valid($input,$error)
+    public  function english_char_valid($input,$error)
     {
         $regex = '/^[a-zA-Z0-9$@$!%*?&#^-_. +]+$/';
-            if (!preg_match($regex, @$input) ) {
+            if (!preg_match($regex, $this->protection_input(@$input)) ) {
                 ?>
                 <div style='text-align:right' class='alert alert-danger'>
                 <?php  echo $error;  ?>
