@@ -47,7 +47,7 @@ class upload extends pagination{
     $folder = "$file_upload_to /";
     $path = $folder . $rand . $file_name;
     $tmp = explode('.', $file_name);
-    $test_type = end($tmp);
+    $test_type =  strtolower(end($tmp));
     $type = array('pdf');
     //chack the image is the fake or not
     $check = getimagesize($file_tmp_name);
