@@ -12,6 +12,9 @@ class database{
 
 
      $con = mysqli_connect($this->localhost, $this->username,$this->password,$this->database);
+      $charset="utf8";
+           mysqli_set_charset($con,$charset);
+
      if (!$con) {
          echo "لم يتم الاتصال";
      } else {
