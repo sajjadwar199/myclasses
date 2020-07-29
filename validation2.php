@@ -1,6 +1,11 @@
 
 <?php  
+
 require 'database.php' ;
+/* ####
+class  by sajjad kareem
+
+*/
 class validation extends database{
 /* find_errors prop */
 private $errors=[];
