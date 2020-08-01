@@ -1,12 +1,11 @@
-
 <?php  
-
 require 'database.php' ;
 /* ####
 class  by sajjad kareem
 
 */
 class validation extends database{
+
 /* find_errors prop */
 private $errors=[];
 /* find_errors prop */
@@ -21,14 +20,16 @@ public $masgs=array();
 /* masgs */
 /* flag all validation */
 //  public $ok;
+/* custom name */
+private $custom_name=array();
+/* custom name */
+private $custom_name2=array();
+
 /* flag all validation */
 public function test_validate(){
 
-return $this->find_errors($this->check);
+  return $this->find_errors($this->check);
 }
-
-  
-
 public function vaidation($valid_array,$msg_array=null){
     foreach($valid_array as $key=>$value){
     
@@ -47,6 +48,9 @@ public function vaidation($valid_array,$msg_array=null){
      case substr($option,0,3) == "min":
       $this->min(substr($option,4),$key);
      break;
+     case substr($option,0,4)=="name":
+      $this->custom_name[]=$key.':'.substr($option,5);
+    break;
      case "require":
       $this->require($key);
      break;
@@ -58,7 +62,10 @@ public function vaidation($valid_array,$msg_array=null){
      break;
      case "email":
       $this->email($key);
-
+     break;
+      case "eng":
+        $this->eng($key);
+       break;
     } ;
 
 
@@ -73,97 +80,209 @@ public function vaidation($valid_array,$msg_array=null){
 
 }
 
-private function max($max_number,$input_name=null){
+private function max($max_number,$input_name=null,$custom_name_arabic=null){
+  foreach($this->custom_name as $value){
+      $pos= strpos($value,":");
+  /*custom name */$name= substr($value,0,$pos);
+  /* origanl name */$custom_name= substr($value,$pos+1);
 
+  if($name == $input_name){
+    $custom_name_arabic=$custom_name;
+  }
+
+  }
     if(in_array($this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name])))),$this->input_names)  ){
       $input_value=$this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name]))));
     }
   // echo strlen($input_value) .'<Br>';
       if(strlen("$input_value") > $max_number){
-       array_push($this->masgs,'اقل من '.' '. $max_number.' '.' قيم'.' '.$input_name.' '.'  الرجاء ادخال حقل ');
+        if(isset($custom_name_arabic)){
+          array_push($this->masgs, $max_number.' '.'  '.'  '.'  يجب ان تكون عدد الكلمات او الارقام في حقل'.' '.$custom_name_arabic. ' لا تتعدى');
+  
+        }else{
+          array_push($this->masgs, $max_number.' '.' لا تتعدى'.' '.$input_name.' '.'  يجب ان تكون عدد الكلمات او الارقام في حقل ');
+
+        }
        array_push($this->check,"false");
       }else{
         array_push($this->check,"true");
       };
 
 }
-private function min($min_number,$input_name=null){
+private function min($min_number,$input_name=null,$custom_name_arabic=null){
+    foreach($this->custom_name as $value){
+        $pos= strpos($value,":");
+    /*custom name */$name= substr($value,0,$pos);
+    /* origanl name */$custom_name= substr($value,$pos+1);
+
+    if($name == $input_name){
+      $custom_name_arabic=$custom_name;
+  }
+
+    }
+      if(in_array($this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name])))),$this->input_names)  ){
+        $input_value=$this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name]))));
+      }
+    // echo strlen($input_value) .'<Br>';
+        if(strlen("$input_value") < $min_number){
+          if(isset($custom_name_arabic)){
+            array_push($this->masgs, $min_number.' '.'  '.'  '.'  يجب ان تكون عدد الكلمات او الارقام في حقل'.' '.$custom_name_arabic. ' على الاقل ');
+
+    
+          }else{
+            array_push($this->masgs,$min_number.' '.' على الاقل'.' '.$input_name.' '.' يجب انت تكون عدد الكلمات او الارقام في حقل   ');
+
+          }
+      array_push($this->check,"false");
+        }else{
+          array_push($this->check,"true");
+        };
+}
+private function number($input_name=null,$custom_name_arabic=null){
+    foreach($this->custom_name as $value){
+      $pos= strpos($value,":");
+  /*custom name */$name= substr($value,0,$pos);
+  /* origanl name */$custom_name= substr($value,$pos+1);
+
+  if($name == $input_name){
+    $custom_name_arabic=$custom_name;
+  }
+  
+    }
  
-    if(in_array($this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name])))),$this->input_names)  ){
+    if(in_array($this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name])))),$this->input_names)  ){
       $input_value=$this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name]))));
     }
-  // echo strlen($input_value) .'<Br>';
-      if(strlen("$input_value") < $min_number){
-    array_push($this->masgs,'اكثر من '.' '. $min_number.' '.' قيم'.' '.$input_name.' '.' الرجاء ادخال حقل  ');
-    array_push($this->check,"false");
+    if(!preg_match("/^[0-9]+$/",$input_value)){
+      if(isset($custom_name_arabic)){
+        array_push($this->masgs,' '.' الرجاء ادخال ارقام فقط في حقل   '. $custom_name_arabic);
+
       }else{
-        array_push($this->check,"true");
+      array_push($this->masgs,$input_name.' '.' الرجاء ادخال ارقام فقط في حقل   ');
+
       };
+      array_push($this->check,"false");
+    }else{
+      array_push($this->check,"true");
+    }
 }
-private function number($input_name=null){
-  if(in_array($this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name])))),$this->input_names)  ){
-    $input_value=$this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name]))));
+private function require($input_name=null,$custom_name_arabic=null){
+    foreach($this->custom_name as $value){
+      $pos= strpos($value,":");
+  /*custom name */$name= substr($value,0,$pos);
+  /* origanl name */$custom_name= substr($value,$pos+1);
+
+  if($name == $input_name){
+    $custom_name_arabic=$custom_name;
   }
-  if(!preg_match("/^[0-9]+$/",$input_value)){
-    array_push($this->masgs,$input_name.' '.' الرجاء ادخال ارقام فقط في حقل   ');
-    array_push($this->check,"false");
-  }else{
-    array_push($this->check,"true");
-  }
+
+    }
+    
+    if(in_array($this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name])))),$this->input_names)  ){
+      $input_value=$this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name]))));
+    }
+    if (empty($input_value)) {
+      if(isset($custom_name_arabic)){
+        array_push($this->masgs,'لا تترك حقل '.$custom_name_arabic.' '.'فارغ');
+
+      }else{
+        array_push($this->masgs,'  فارغ'.' '.$input_name.' '.'  لا تترك حقل   ');
+
+      }
+      array_push($this->check,"false");
+    }else{
+      array_push($this->check,"true");
+    }
+
 }
-private function require($input_name=null){
-  if(in_array($this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name])))),$this->input_names)  ){
-    $input_value=$this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name]))));
+private function url($input_name=null,$custom_name_arabic=null){
+    foreach($this->custom_name as $value){
+      $pos= strpos($value,":");
+  /*custom name */$name= substr($value,0,$pos);
+  /* origanl name */$custom_name= substr($value,$pos+1);
+
+  if($name == $input_name){
+    $custom_name_arabic=$custom_name;
   }
-  if (empty($input_value)) {
-    array_push($this->masgs,'  فارغ'.' '.$input_name.' '.'  لا تترك حقل   ');
-    array_push($this->check,"false");
-  }else{
-    array_push($this->check,"true");
+
+    }
+    if(in_array($this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name])))),$this->input_names)  ){
+      $input_value=$this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name]))));
+    }
+    if (!filter_var($input_value,FILTER_VALIDATE_URL)) {
+      if(isset($custom_name_arabic)){
+        array_push($this->masgs,' '.'الرجاء  كتابة رابط  صحيح في حقل  '.$custom_name_arabic);
+
+      }else{
+        array_push($this->masgs,$input_name.' '.'الرجاء  كتابة رابط  صحيح في حقل  ');
+
+      }
+      array_push($this->check,"false");
+    }else{
+      array_push($this->check,"true");
+    }
+}
+private function eng($input_name=null,$custom_name_arabic=null){
+    foreach($this->custom_name as $value){
+      $pos= strpos($value,":");
+  /*custom name */$name= substr($value,0,$pos);
+  /* origanl name */$custom_name= substr($value,$pos+1);
+
+  if($name == $input_name){
+    $custom_name_arabic=$custom_name;
+  }
+
+    }
+    if(in_array($this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name])))),$this->input_names)  ){
+      $input_value=$this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name]))));
+    }
+    $regex = '/^[a-zA-Z0-9$@$!%*?&#^-_. +]+$/';
+    if (!preg_match($regex,$input_value) ) {
+      if(isset($custom_name_arabic)){
+        array_push($this->masgs,'الرجاء كتابة اللغة الانكليزية فقط في حقل'.' '.$custom_name_arabic);
+
+      }else{
+        array_push($this->masgs,$input_name.' '.'الرجاء كتابة اللغة الانكليزية فقط في حقل');
+
+      }
+      array_push($this->check,"false");
+    }else{
+      array_push($this->check,"true");
+
   }
 
 }
-private function url($input_name=null){
-  if(in_array($this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name])))),$this->input_names)  ){
-    $input_value=$this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name]))));
-  }
-  if (!filter_var($input_value,FILTER_VALIDATE_URL)) {
-    array_push($this->masgs,$input_name.' '.'الرجاء  كتابة رابط  صحيح في حقل  ');
-    array_push($this->check,"false");
-  }else{
-    array_push($this->check,"true");
-  }
-}
-private function eng($input_name=null){
-  if(in_array($this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name])))),$this->input_names)  ){
-    $input_value=$this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name]))));
-  }
-  $regex = '/^[a-zA-Z0-9$@$!%*?&#^-_. +]+$/';
-  if (!preg_match($regex,$input_value) ) {
-    array_push($this->masgs,$input_name.' '.'الرجاء كتابة اللغة الانكليزية فقط في حقل');
-    array_push($this->check,"false");
-  }else{
-    array_push($this->check,"true");
+private function email($input_name=null,$custom_name_arabic=null){
+    foreach($this->custom_name as $value){
+      $pos= strpos($value,":");
+  /*custom name */$name= substr($value,0,$pos);
+  /* origanl name */$custom_name= substr($value,$pos+1);
 
+  if($name == $input_name){
+    $custom_name_arabic=$custom_name;
   }
 
-}
-private function email($input_name=null){
-  
-  if(in_array($this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name])))),$this->input_names)  ){
-    $input_value=$this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name]))));
-  }
-  if (!@filter_var($this->protection_input($input_value),FILTER_VALIDATE_EMAIL)){
-    array_push($this->masgs,$input_name.' '.'الرجاء كتابة بريد الكتروني  صحيح في حقل ');
-    array_push($this->check,"false");
+    }
+    if(in_array($this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name])))),$this->input_names)  ){
+      $input_value=$this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name]))));
+    }
+    if (!@filter_var($this->protection_input($input_value),FILTER_VALIDATE_EMAIL)){
+      if(isset($custom_name_arabic)){
+        array_push($this->masgs,'الرجاء كتابة بريد الكتروني  صحيح في حقل '.' '.$custom_name_arabic);
 
-  }else{
-    array_push($this->check,"true");
+      }else{
+        array_push($this->masgs,$input_name.' '.'الرجاء كتابة بريد الكتروني  صحيح في حقل ');
+
+      }
+      array_push($this->check,"false");
+
+    }else{
+      array_push($this->check,"true");
+    }
   }
-}
 public function errors_validate(){
   foreach($this->masgs as $errors){
-    echo  '<div style="text-align:right;color:red;" >' .$errors .'</div>';
+    echo  '<div class="alert alert-danger" style="text-align:right;" >' .$errors .'</div>';
   }
   }
 
