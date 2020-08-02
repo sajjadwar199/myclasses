@@ -3,35 +3,28 @@ class database{
  private $localhost='localhost';
  private $username='root';
  private $password='';
- private $database='pos';
+ private $database='crud';
+ protected $con;
 
- protected $connection;
-
- public function connect()
- {
+ public function connect(){
 
 
      $con = mysqli_connect($this->localhost, $this->username,$this->password,$this->database);
-      $charset="utf8";
-           mysqli_set_charset($con,$charset);
-
      if (!$con) {
          echo "لم يتم الاتصال";
      } else {
          echo "";
      }
-     return $con;
- }
+     return $con;}
 
 public  function escape_string($value)
 {
     $c = new main;
     $conn = $c->connect();
-        return mysqli_real_escape_string($conn,$value);
-}
+        return mysqli_real_escape_string($conn,$value);}
 
 
-public  function insert($table_name,$assoc_array,$successmsg=null){
+public function insert($table_name,$assoc_array,$successmsg=null){
 
     $keys = array();
     $values= array();
@@ -56,8 +49,7 @@ public  function insert($table_name,$assoc_array,$successmsg=null){
   }
 } 
 
-
-public static function update($table,$where,$set,$successmsg=null){
+public  function update($table,$set,$where,$successmsg=null){
 
     $sql = "UPDATE $table SET $set  WHERE $where";
     $c = new database;
@@ -79,7 +71,7 @@ public static function update($table,$where,$set,$successmsg=null){
 } 
     
 
-public static function delete($table,$idname,$id,$successmsg=null){
+public  function delete($table,$idname,$id,$successmsg=null){
 
    
         $query = "DELETE FROM $table WHERE $idname = $id";
@@ -101,60 +93,54 @@ public static function delete($table,$idname,$id,$successmsg=null){
         
 } 
 
-public static function show($table,$where=null){
-  $query = "SELECT * FROM $table   $where  ";
-  $c = new database;
-$conn = $c->connect();
-$q= mysqli_query($conn,$query);
-if ($q == false) {
+public  function show($table,$where=null){
+ $query = "SELECT * FROM $table   $where  ";
+ $c = new database;
+ $conn = $c->connect();
+ $q= mysqli_query($conn,$query);
+ if ($q == false) {
   return false;
-}
-$rows = array();
-while ($row =mysqli_fetch_array($q)) {
+ }
+ $rows = array();
+ while ($row =mysqli_fetch_object($q)) {
   $rows[] = $row;
-}
+ }
 
-return $rows;
+ return $rows;
     
 } 
 
 
-public static function number_query($table,$where=null){
-  $c = new database;
-$conn = $c->connect();
-$query = "SELECT * FROM $table  $where  ";
-$q= mysqli_query($conn,$query);
-if ($q == false) {
-  return false;
-}
-$num=mysqli_num_rows($q);
-return $num;
+public  function number_query($table,$where=null){
+    $c = new database;
+  $conn = $c->connect();
+  $query = "SELECT * FROM $table  $where  ";
+  $q= mysqli_query($conn,$query);
+  if ($q == false) {
+    return false;
+  }
+  $num=mysqli_num_rows($q);
+  return $num;
 }  
 
-
-
-function query($sql)
-{
-    $c = new main;
-    $conn = $c->connect();
-    $query = mysqli_query($conn, $sql);
-    if (!$query) {
-
-        $_SESSION['error_massage'] = 'åäÇß ÎØÇ Ýí ÇáÇÓÊÚáÇã';
-    } else {
-        echo "";
-    }
-    return $query;
-}
-//fetch array of all information from database 
-public static function  fetch($q)
-{
+public function fetch($q){
     $row = mysqli_fetch_array($q);
     return $row;
 }
 
-public static function model($sql2, $alert = null, $page = null)
-{
+function query($sql){
+  $c = new main;
+  $conn = $c->connect();
+  $query = mysqli_query($conn, $sql);
+  if (!$query) {
+
+      $_SESSION['error_massage'] = 'åäÇß ÎØÇ Ýí ÇáÇÓÊÚáÇã';
+  } else {
+      echo "";
+  }
+  return $query;
+}
+public function model($sql2, $alert = null, $page = null){
     $c = new main;
     $conn = $c->connect();
     @$query = mysqli_query($conn, $sql2);
@@ -166,33 +152,47 @@ public static function model($sql2, $alert = null, $page = null)
         echo "<Script>window.open('$page','_self')</Script>";
     }
 }
-public  function insert_last_id($table_name,$assoc_array,$successmsg=null){
+public  function insert_last_id($table_name,$assoc_array,$successmsg=null,$echo_id=null){
 
-  $keys = array();
-  $values= array();
-  foreach($assoc_array as $key => $value){
-      $keys[] = $key;
-      $values[] =$this->escape_string(strip_tags(htmlentities($_POST[$value]))) ;
-  }
-  $query = "INSERT INTO `$table_name`(`".implode("`,`", $keys)."`) VALUES('".implode("','", $values)."')";
-  $c = new database;
-  $conn = $c->connect();
-  $q=  mysqli_query($conn,$query);
-  if($q){
-    $last=$conn->insert_id;
-  $_SESSION['success_message']=$successmsg.$last;
-  echo  '     <script>
-  if ( window.history.replaceState ) {
-    window.history.replaceState( null, null, window.location.href );
-  }
-  </script>';
-}else{
-  $_SESSION['error_massage'] = 'هناك خطا  ';
+    $keys = array();
+    $values= array();
+    foreach($assoc_array as $key => $value){
+        $keys[] = $key;
+        $values[] =$this->escape_string(strip_tags(htmlentities($_POST[$value]))) ;
+    }
+    $query = "INSERT INTO `$table_name`(`".implode("`,`", $keys)."`) VALUES('".implode("','", $values)."')";
+    $c = new database;
+    $conn = $c->connect();
+    $q=  mysqli_query($conn,$query);
+    if($q){
+      $last=$conn->insert_id;
+      if($echo_id == true){
+        $_SESSION['success_message']=$successmsg.$last;
 
-}
+      }else{
+        $_SESSION['success_message']=$successmsg;
+      }
+    echo  '     <script>
+    if ( window.history.replaceState ) {
+      window.history.replaceState( null, null, window.location.href );
+    }
+    </script>';
+    return $last;
+  }else{
+    
+    $_SESSION['error_massage'] = 'هناك خطا  ';
+
+  }
 } 
+public  function protection_input($input)
+{
+   $protect=$this->escape_string(strip_tags(htmlentities(trim(@$input)))) ;
 
-
+    return $protect;
+    }
+public function delete_multi(){
+  
+}
 
 };
 
