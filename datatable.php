@@ -13,7 +13,7 @@ public function datatable_css(){
     
     ';
 }
- public function datatable_js(){
+public function datatable_js(){
             echo '
             <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
             <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
@@ -114,7 +114,7 @@ public function table_start($cols_name,$table_id){
                     <tr>
 						<th>
 							<span class="custom-checkbox">
-								<input type="checkbox" id="selectAll">
+                            <input type="checkbox" onclick="checkAll(this)">
 								<label for="selectAll"></label>
 							</span>
                         </th>
@@ -138,8 +138,6 @@ public function table_start($cols_name,$table_id){
     <?php
 }
 
-
-
 public function  table_end(){
     echo '
     
@@ -157,6 +155,19 @@ public function  table_end(){
     </tbody>
     
     </table>';
+    ?>
+    <script>
+        function checkAll(bx) {
+    var cbs = document.getElementsByTagName('input');
+    for(var i=0; i < cbs.length; i++) {
+        if(cbs[i].type == 'checkbox') {
+        cbs[i].checked = bx.checked;
+        }
+    }
+    }
+    </script>
+    <?php
+    
 }
 
 };
