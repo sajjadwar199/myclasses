@@ -6,7 +6,7 @@ class database{
  private $database='crud';
  protected $con;
 
- public function connect(){
+public function connect(){
 
 
      $con = mysqli_connect($this->localhost, $this->username,$this->password,$this->database);
@@ -190,8 +190,14 @@ public  function protection_input($input)
 
     return $protect;
     }
-public function delete_multi(){
-  
+public function delete_multi($table,$idname,$check_boxs_input,$successmsg=null){
+  if(isset($_POST["$check_boxs_input"])){
+ 
+    foreach($_POST["$check_boxs_input"]  as $id){
+  $q=$this->delete($table,$idname,$id,$successmsg);
+    }
+
+ }
 }
 
 };
