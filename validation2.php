@@ -100,7 +100,7 @@ private function max($max_number,$input_name=null,$custom_name_arabic=null){
           array_push($this->masgs, $max_number.' '.'  '.'  '.'  يجب ان تكون عدد الكلمات او الارقام في حقل'.' '.$custom_name_arabic. ' لا تتعدى');
   
         }else{
-          array_push($this->masgs, $max_number.' '.' لا تتعدى'.' '.$input_name.' '.'  يجب ان تكون عدد الكلمات او الارقام في حقل ');
+          array_push($this->masgs,' '.' لا تتعدى'.' '.$input_name.' '.'  يجب ان تكون عدد الكلمات او الارقام في حقل ' .$max_number);
 
         }
        array_push($this->check,"false");
@@ -130,7 +130,7 @@ private function min($min_number,$input_name=null,$custom_name_arabic=null){
 
     
           }else{
-            array_push($this->masgs,$min_number.' '.' على الاقل'.' '.$input_name.' '.' يجب انت تكون عدد الكلمات او الارقام في حقل   ');
+            array_push($this->masgs,' '.' على الاقل'.' '.$input_name.' '.' يجب انت تكون عدد الكلمات او الارقام في حقل   '.$min_number);
 
           }
       array_push($this->check,"false");
@@ -281,9 +281,9 @@ private function email($input_name=null,$custom_name_arabic=null){
     }
   }
 public function errors_validate(){
-  foreach($this->masgs as $errors){
-    echo  '<div class="alert alert-danger" style="text-align:right;" >' .$errors .'</div>';
-  }
+    foreach($this->masgs as $errors){
+      echo  '<div class="alert alert-danger" style="text-align:right;" >' .$errors .'</div>';
+    }
   }
 
 public function find_errors($errors_array){
