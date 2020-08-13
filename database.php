@@ -3,8 +3,9 @@ class database{
  private $localhost='localhost';
  private $username='root';
  private $password='';
- private $database='crud';
+ private $database='trucks';
  protected $con;
+ protected $update_array=[];
 
 public function connect(){
 
@@ -49,9 +50,14 @@ public function insert($table_name,$assoc_array,$successmsg=null){
   }
 } 
 
-public  function update($table,$set,$where,$successmsg=null){
-
-    $sql = "UPDATE $table SET $set  WHERE $where";
+public  function update($table,$array_update,$where,$successmsg=null){
+  foreach($array_update as  $key=>$value)
+{
+  array_push($this->update_array,$key.'='."'$_POST[$value]'");
+}
+$value_update= implode(",",$this->update_array);
+  
+   $sql = "UPDATE $table SET $value_update   WHERE $where";
     $c = new database;
     $conn = $c->connect();
   $q=  mysqli_query($conn,$sql);
@@ -66,8 +72,8 @@ public  function update($table,$set,$where,$successmsg=null){
   }else{
     $_SESSION['error_massage'] = 'هناك خطا  ';
 
-  }
-   
+  } 
+    
 } 
     
 
