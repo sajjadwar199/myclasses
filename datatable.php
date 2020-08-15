@@ -169,6 +169,107 @@ public function  table_end(){
     <?php
     
 }
+	public function datatable_js2($url_dir){
+    ?>
+            
+    <script src="<?php  echo $url_dir;  ?>includes/datatable/jquery.dataTables.min.js"></script>
+    <script src="<?php  echo $url_dir;  ?>includes/datatable/dataTables.buttons.min.js"></script>
+    <script src="<?php  echo $url_dir;  ?>includes/datatable/buttons.flash.min.js"></script>
+    <script src="<?php  echo $url_dir;  ?>includes/datatable/jszip.min.js"></script>
+    <script src="<?php  echo $url_dir;  ?>includes/datatable/pdfmake.min.js"></script>
+    <script src="<?php  echo $url_dir;  ?>includes/datatable/vfs_fonts.js"></script>
+    <script src="<?php  echo $url_dir;  ?>includes/datatable/buttons.html5.min.js"></script>
+    <script src="<?php  echo $url_dir;  ?>includes/datatable/buttons.print.min.js"></script>
+
+    
+
+ <?php 
+
+    
+    
+   
+    ?>
+    <script>
+    var idioma=
+
+    {
+        "sProcessing":     "جارٍ التحميل...",
+        "sLengthMenu":     "أظهر _MENU_ مدخلات",
+        "sZeroRecords":    "لم يعثر على أية سجلات",
+        "sEmptyTable":     "الجدول فارغ",
+        "sInfo":           "إظهار _START_ إلى _END_ من أصل _TOTAL_ مدخل",
+        "sInfoEmpty":      "يعرض 0 إلى 0 من أصل 0 سجل",
+        "sInfoFiltered":   "(منتقاة من مجموع _MAX_ مُدخل)",
+        "sInfoPostFix":    "",
+        "sSearch":         "ابحث",
+        "sUrl":            "",
+        "sInfoThousands":  ",",
+        "sLoadingRecords": "Cargando...",
+        "oPaginate": {
+            "sFirst":    "الأول",
+            "sLast":     "الاخير",
+            "sNext":     "التالي",
+            "sPrevious": "السابق"
+        },
+        "oAria": {
+            "sSortAscending":  ": تفعيل لترتيب العمود تصاعدياً",
+            "sSortDescending": ": تفعيل لترتيب العمود تنازلياً"
+        },
+        "buttons": {
+            "print":"طباعة",
+            "copy":"نسخ",
+            "excel":"تصدير الى اكسل",
+            "copyTitle": 'نسخ المعلومات ',
+            "copyKeys": 'Use your keyboard or menu to select the copy command',
+            "copySuccess": {
+                "_": ' تم نسخ  %d صف  بنجاح ',
+                "1": 'تم نسخ صف واحد بنجاح    '
+            },
+
+            "pageLength": {
+            "_": " عرض  %d  من الصفوف",
+            "-1": "   كل الصفوف "
+            }
+        }
+    };
+
+    $(document).ready(function() {
+
+        $(document).ready(function() {
+    $("<?php  echo $this->table_id; ?>").DataTable( {
+        "lengthMenu": [[5, 25, 50, -1], [10, 25, 50, "All"]],
+        dom: 'Bfrtip',
+        buttons: [
+            'excel','copy','print',
+            {
+                extend: 'print',
+                customize: function ( win ) {
+                    $(win.document.body)
+                        .css( 'direction',"rtl" )
+                        .prepend(
+                            '<img src="http://datatables.net/media/images/logo-fade.png" style="position:absolute; top:0; left:0;" />'
+                        );
+ 
+                    $(win.document.body).find( 'table' )
+                        .addClass( 'compact' )
+                        .css( 'font-size', 'inherit' );
+                }
+            }
+        ],
+        "language":idioma,
+        "title":"hi",
+    
+    
+    } );
+    } );
+
+
+        
+    } );
+    </script>
+
+    <?php
+}
 
 };
 
