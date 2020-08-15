@@ -44,6 +44,25 @@ public function bootstrab_header(){
 public function bootstrab_footer(){
 
     }
-   
+   public function print_div($div_id){
+        ?>
+        <h4><input type="button"  class="  fa fas-print btn btn-success"  onclick="printDiv('<?php echo $div_id; ?>')" value="طباعة" /></h4>
+
+    <script>
+    function printDiv(divName) {
+        var printContents = document.getElementById(divName).innerHTML;
+        var originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents;
+
+        window.print();
+
+        document.body.innerHTML = originalContents;
+    }
+
+    </script>
+
+    <?php 
+}
 }
 ?>
