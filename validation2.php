@@ -1,10 +1,10 @@
 <?php  
-require 'database.php' ;
+require 'upload.php' ;
 /* ####
 class  by sajjad kareem
 
 */
-class validation extends database{
+class validation extends upload{
 
 /* find_errors prop */
 private $errors=[];
@@ -66,6 +66,9 @@ public function vaidation($valid_array,$msg_array=null){
       case "eng":
         $this->eng($key);
        break;
+        case "date":
+          $this->date($key);
+        break;
     } ;
 
 
@@ -79,7 +82,33 @@ public function vaidation($valid_array,$msg_array=null){
     /*get the name inputs */
 
 }
+private function date($input_name=null,$custom_name_arabic=null){
+    foreach($this->custom_name as $value){
+      $pos= strpos($value,":");
+  /*custom name */$name= substr($value,0,$pos);
+  /* origanl name */$custom_name= substr($value,$pos+1);
 
+  if($name == $input_name){
+    $custom_name_arabic=$custom_name;
+  }
+
+    }
+    if(in_array($this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name])))),$this->input_names)  ){
+      $input_value=$this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name]))));
+    }
+    if (!preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$input_value)) {
+      if(isset($custom_name_arabic)){
+        array_push($this->masgs,' '.'الرجاء  كتابة تاريخ  صحيح في حقل  '.$custom_name_arabic);
+
+      }else{
+        array_push($this->masgs,' '.'الرجاء  كتابة تاريخ  صحيح في حقل  '.$input_name);
+
+      }
+      array_push($this->check,"false");
+    }else{
+      array_push($this->check,"true");
+    }
+}
 private function max($max_number,$input_name=null,$custom_name_arabic=null){
   foreach($this->custom_name as $value){
       $pos= strpos($value,":");
@@ -91,16 +120,16 @@ private function max($max_number,$input_name=null,$custom_name_arabic=null){
   }
 
   }
-    if(in_array($this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name])))),$this->input_names)  ){
-      $input_value=$this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name]))));
+    if(in_array($this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name])))),$this->input_names)  ){
+      $input_value=$this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name]))));
     }
   // echo strlen($input_value) .'<Br>';
       if(strlen("$input_value") > $max_number){
         if(isset($custom_name_arabic)){
-          array_push($this->masgs, $max_number.' '.'  '.'  '.'  يجب ان تكون عدد الكلمات او الارقام في حقل'.' '.$custom_name_arabic. ' لا تتعدى');
+          array_push($this->masgs,' '.'  '.'  '.'  يجب ان تكون عدد الكلمات او الارقام في حقل'.' '.$custom_name_arabic. ' لا تتعدى'.' '. $max_number);
   
         }else{
-          array_push($this->masgs,' '.' لا تتعدى'.' '.$input_name.' '.'  يجب ان تكون عدد الكلمات او الارقام في حقل ' .$max_number);
+          array_push($this->masgs,$max_number.' '.' لا تتعدى'.' '.$input_name.' '.'  يجب ان تكون عدد الكلمات او الارقام في حقل ' );
 
         }
        array_push($this->check,"false");
@@ -151,7 +180,7 @@ private function number($input_name=null,$custom_name_arabic=null){
     }
  
     if(in_array($this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name])))),$this->input_names)  ){
-      $input_value=$this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name]))));
+      $input_value=$this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name]))));
     }
     if(!preg_match("/^[0-9]+$/",$input_value)){
       if(isset($custom_name_arabic)){
@@ -179,7 +208,7 @@ private function require($input_name=null,$custom_name_arabic=null){
     }
     
     if(in_array($this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name])))),$this->input_names)  ){
-      $input_value=$this->escape_string(strip_tags(htmlentities(trim($_POST[$input_name]))));
+      $input_value=$this->escape_string(strip_tags(htmlentities(trim(@$_POST[$input_name]))));
     }
     if (empty($input_value)) {
       if(isset($custom_name_arabic)){
@@ -282,7 +311,10 @@ private function email($input_name=null,$custom_name_arabic=null){
   }
 public function errors_validate(){
     foreach($this->masgs as $errors){
-      echo  '<div class="alert alert-danger" style="text-align:right;" >' .$errors .'</div>';
+      echo  '  <div class="alert alert-dismissible alert-warning text-right direction-rtl" role="alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>'.$errors.'</strong>.
+            </div>';
     }
   }
 
