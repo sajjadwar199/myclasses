@@ -1,5 +1,5 @@
 <?php  
-require 'classes/message.php' ;
+require 'message.php' ;
 class pagination extends message{
     
    //class by sajjad kareem
@@ -11,6 +11,7 @@ class pagination extends message{
   /* عدد العناصر في الصفحة */ private $limit=5;
   /* عدد العناصر التي ستعرض في الصفحة */ private $number_show;
   /* تحديد عددالروابط في الوسط */ private $links_between;
+  /* متغيرات الروابط في الرابط    ex ?page=2&&id=10 */ private $url_vars;
 
 private function page_get(){
    if(isset($_GET['page'])){
@@ -24,7 +25,8 @@ private function page_get(){
         $this->number_show=0;
     }
     }
-public function paginate_option($table,$page,$limit=null,$where=null,$links_between=null){
+public function paginate_option($table,$page,$limit=null,$where=null,$links_between=null,$url_vars=null){
+     echo $this->url_vars=$url_vars;
     $this->links_between=$links_between;
     $this->table=$table;
     $this->page=$page;
@@ -46,7 +48,7 @@ public function prev(){
        if($page>1){
            $mins=$page-1;
       
-    $prev_btn=" <li class='page-item'>"."<a class='page-link' href=$this->page?page=$mins  >&laquo;</a>"."</li>";
+    $prev_btn=" <li class='page-item'>"."<a class='page-link' href=$this->page?page=$mins$this->url_vars   >&laquo;</a>"."</li>";
       return $prev_btn;
        }
     
@@ -62,7 +64,7 @@ private function next($rowsperpage){
        if($page+1<=$rowsperpage){
         $pos=$page+1;
       
-    $next_btn=" <li class='page-item'>"."<a class='page-link' href=$this->page?page=$pos  >&raquo;</a>"."</li>";
+    $next_btn=" <li class='page-item'>"."<a class='page-link' href=$this->page?page=$pos$this->url_vars  >&raquo;</a>"."</li>";
       return $next_btn;
        }
     
@@ -87,13 +89,13 @@ private function links($rowsperpage){
 
     if ($rowsperpage >=1 && $page <= $rowsperpage)
     {
-        $counter = 1;
+        $counter =1;
         $link = "";
         if ($page > ($limit/2))
            { $link .= 
             "
             <li  class='page-item'> 
-            <a   class='page-link'  href=\"?page=1\">1 </a>   <a    class='page-link'>...</a>
+            <a   class='page-link'  href=\"?page=1$this->url_vars \">1 </a>   <a    class='page-link'>...</a>
 
             </li>
             
@@ -111,14 +113,14 @@ private function links($rowsperpage){
                 $link .= "
                 <li class='page-item active'>
             
-                <a    class='page-link'   href=\"?page=" .$i."\">".$i." </a>
+                <a    class='page-link'   href=\"?page=" .$i.$this->url_vars ."\">".$i." </a>
                 
                 </li>
                 ";
             }else{
                 $link .= "
                 <li  class='page-item'> 
-                <a    class='page-link'   href=\"?page=" .$i."\">".$i." </a>
+                <a    class='page-link'   href=\"?page=" .$i.$this->url_vars ."\">".$i." </a>
                 
                 </li>
                 ";
@@ -131,7 +133,7 @@ private function links($rowsperpage){
          { $link .=   "
             
             <li  class='page-item'> 
-            <a   class='page-link' >...</a>  <a   class='page-link'   href=\"?page=" .$rowsperpage."\">".$rowsperpage." </a>
+            <a   class='page-link' >...</a>  <a   class='page-link'   href=\"?page=" .$rowsperpage.$this->url_vars ."\">".$rowsperpage." </a>
             </li>
             
             "; }
