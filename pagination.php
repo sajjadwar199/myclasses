@@ -14,7 +14,7 @@ class pagination extends message{
 
 private function page_get(){
    if(isset($_GET['page'])){
-                $page=$_GET['page'];
+                $page=(int)$_GET['page'];
                 if($page==0||$page<1){
                 $this->number_show=0;
                 }else{
@@ -37,7 +37,7 @@ public function paginate_option($table,$page,$limit=null,$where=null,$links_betw
 }
 public function prev(){
     if(isset($_GET['page'])){
-        $page=$_GET['page'];
+        $page= (int)$_GET['page'];
     }
     if(!isset($page)||$page==''||$page<1){
         $page=1;
@@ -53,7 +53,7 @@ public function prev(){
 }
 private function next($rowsperpage){
     if(isset($_GET['page']) and $_GET['page']!=''){
-        $page=$_GET['page'];
+        $page= (int)$_GET['page'];
     }
     if(!isset($page)||$page==''||$page<1||$page>$rowsperpage){
         $page=1;
@@ -70,7 +70,7 @@ private function next($rowsperpage){
 private function links($rowsperpage){
    
     if(isset($_GET['page'])){
-        $page=$_GET['page'];
+        $page= (int)$_GET['page'];
     }
     // your current page
     // $pages=20; // Total number of pages
@@ -141,7 +141,7 @@ private function links($rowsperpage){
 }
 public function paginate_links(){
         if(isset($_GET['page'])){
-            $page=$_GET['page'];
+            $page=(int)$_GET['page'];
         }
             $c = new database;
             $conn = $c->connect();
