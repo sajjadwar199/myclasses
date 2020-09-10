@@ -38,9 +38,11 @@ public function paginate_option($table,$page,$limit=null,$where=null,$links_betw
 public function prev(){
     if(isset($_GET['page'])){
         $page=$_GET['page'];
-    }else{
+    }
+    if(!isset($page)||$page==''||$page<1){
         $page=1;
     }
+
        if($page>1){
            $mins=$page-1;
       
@@ -50,11 +52,13 @@ public function prev(){
     
 }
 private function next($rowsperpage){
-    if(isset($_GET['page'])){
+    if(isset($_GET['page']) and $_GET['page']!=''){
         $page=$_GET['page'];
-    }else{
+    }
+    if(!isset($page)||$page==''||$page<1||$page>$rowsperpage){
         $page=1;
     }
+
        if($page+1<=$rowsperpage){
         $pos=$page+1;
       
@@ -67,10 +71,13 @@ private function links($rowsperpage){
    
     if(isset($_GET['page'])){
         $page=$_GET['page'];
-    }else{
-        $page=1;
-        } // your current page
+    }
+    // your current page
     // $pages=20; // Total number of pages
+    if(!isset($page)||$page==''||$page<1||$page>$rowsperpage){
+        $page=1;
+    }
+
     if($this->links_between!=''){
         $limit=$this->links_between;
     }else{
@@ -97,6 +104,9 @@ private function links($rowsperpage){
         {
 
             if($counter < $limit)
+          
+
+           
             if($i==@$page){
                 $link .= "
                 <li class='page-item active'>
@@ -113,10 +123,10 @@ private function links($rowsperpage){
                 </li>
                 ";
             }
-          
 
             $counter++;
         }
+    
         if ($page < $rowsperpage - ($limit/2))
          { $link .=   "
             
@@ -126,7 +136,6 @@ private function links($rowsperpage){
             
             "; }
     }
-
     echo $link;
 
 }
@@ -142,7 +151,7 @@ public function paginate_links(){
             /* جميع الصفوف */ $total_rows=array_shift($row_pagination);
             /*  عدد الروابط في الصفحة في الصفحة    */$rowsperpage=$total_rows/$this->limit;
             $rowsperpage=ceil($rowsperpage);
-            if(!isset($page)||$page==''||$page<1){
+            if(!isset($page)||$page==''||$page<1||$page>$rowsperpage){
                 $page=1;
             }
         
@@ -152,6 +161,8 @@ public function paginate_links(){
             <nav aria-label="Page navigation example">
                 
         <ul class="pagination">
+        <?php        if($page>=1){
+ ?>
     <!--prec btn -->  <?php   echo  $this->prev(); ?>
 
   
@@ -159,9 +170,10 @@ public function paginate_links(){
          
 
 
- <!--next btn --><?php echo $this->next($rowsperpage);   ?>
+ <!--next btn --><?php echo $this->next($rowsperpage); }  ?>
         </nav>
         <?php 
+    
 }
 public  function show_with_pagination(){
  
