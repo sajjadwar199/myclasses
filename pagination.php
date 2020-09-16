@@ -2,16 +2,14 @@
 require 'message.php' ;
 class pagination extends message{
     
-   //class by sajjad kareem
-
-   
-   /* الجدول  */ private $table;
-   /* الصفحة */ private $page;
-   /* where */ private $where;
-  /* عدد العناصر في الصفحة */ private $limit=5;
-  /* عدد العناصر التي ستعرض في الصفحة */ private $number_show;
-  /* تحديد عددالروابط في الوسط */ private $links_between;
-  /* متغيرات الروابط في الرابط    ex ?page=2&&id=10 */ private $url_vars;
+//class by sajjad kareem
+/* الجدول  */ private $table;
+/* الصفحة */ private $page;
+/* where */ private $where;
+/* عدد العناصر في الصفحة */ private $limit=5;
+/* عدد العناصر التي ستعرض في الصفحة */ private $number_show;
+/* تحديد عددالروابط في الوسط */ private $links_between;
+/* متغيرات الروابط في الرابط    ex ?page=2&&id=10 */ private $url_vars;
 
 private function page_get(){
    if(isset($_GET['page'])){
@@ -26,7 +24,7 @@ private function page_get(){
     }
     }
 public function paginate_option($table,$page,$limit=null,$where=null,$links_between=null,$url_vars=null){
-     echo $this->url_vars=$url_vars;
+      $this->url_vars=$url_vars;
     $this->links_between=$links_between;
     $this->table=$table;
     $this->page=$page;
@@ -69,78 +67,93 @@ private function next($rowsperpage){
        }
     
 }
-private function links($rowsperpage){
-   
-    if(isset($_GET['page'])){
-        $page= (int)$_GET['page'];
-    }
-    // your current page
-    // $pages=20; // Total number of pages
-    if(!isset($page)||$page==''||$page<1||$page>$rowsperpage){
-        $page=1;
-    }
+private function links($current_page, $total_pages, $url){
+        if(isset($_GET['page'])){
+            $page= (int)$_GET['page'];
+        }
+        // your current page
+        // $pages=20; // Total number of pages
+        if(!isset($page)||$page==''||$page<1||$page>$current_page){
+            $page=1;
+        }
 
-    if($this->links_between!=''){
-        $limit=$this->links_between;
-    }else{
-        $limit=5  ; /* عدد الصفحات التي تضهر في وسط تعداد الصفحات */
+        if($this->links_between!=''){
+            $limit=$this->links_between;
+        }else{
+            $limit=5  ; /* عدد الصفحات التي تضهر في وسط تعداد الصفحات */
 
-    }
+        }
 
-    if ($rowsperpage >=1 && $page <= $rowsperpage)
-    {
-        $counter =1;
-        $link = "";
-        if ($page > ($limit/2))
-           { $link .= 
-            "
-            <li  class='page-item'> 
-            <a   class='page-link'  href=\"?page=1$this->url_vars \">1 </a>   <a    class='page-link'>...</a>
+        $links = "";
+        if ($total_pages >= 1 && $current_page <= $total_pages) {
+            if($page==1){
+                $links .= "
+        
+                <li class='page-item active'>
+                <a  class='page-link' href=\"{$url}?page=1$this->url_vars \">1</a>
+                
+                </li>";
+            }else{
+                $links .= "
+        
+                <li class='page-item'>
+                <a  class='page-link' href=\"{$url}?page=1$this->url_vars \">1</a>
+                
+                </li>";
+            }
+        
+            $i = max(2, $current_page - $limit);
+            if ($i > 2)
+                $links .= "              <li  class='page-item'> 
+                <a class='page-link'>...</a>
+                </li> ";
+            for (; $i < min($current_page + $limit+1, $total_pages); $i++) {
+                if($i==@$page){
+                    $links .= "
 
-            </li>
+
+                    <li class='page-item active'>
+                    <a class='page-link' href=\"{$url}?page={$i}$this->url_vars \">{$i}</a>
+                    </li>
+    ";
+
+
+                }else{
+                    $links .= "
+                    <li  class='page-item'> 
+                    <a class='page-link' href=\"{$url}?page={$i}$this->url_vars \">{$i}</a>
+                    </li>
+                    
+                    ";
+                }
             
-            ";
+            }
+            if ($i != $total_pages)
+                $links .= "     <li  class='page-item'>    <a class='page-link'>...</a></li> ";
+                if($page==$total_pages){
+
+                    $links .= "
+                    <li  class='page-item active'> 
+                <a  class='page-link' href=\"{$url}?page={$total_pages}$this->url_vars \">{$total_pages}</a>
+                    
+                    </li>
+                    
+                    ";
+                }else{
+                    $links .= "
+                    <li  class='page-item'> 
+                <a  class='page-link' href=\"{$url}?page={$total_pages}$this->url_vars \">{$total_pages}</a>
+                    
+                    </li>
+                    
+                    ";
+                }
         
         }
-        for ($i=$page; $i<=$rowsperpage;$i++)
-        {
+        return $links;}
 
-            if($counter < $limit)
-          
 
-           
-            if($i==@$page){
-                $link .= "
-                <li class='page-item active'>
-            
-                <a    class='page-link'   href=\"?page=" .$i.$this->url_vars ."\">".$i." </a>
-                
-                </li>
-                ";
-            }else{
-                $link .= "
-                <li  class='page-item'> 
-                <a    class='page-link'   href=\"?page=" .$i.$this->url_vars ."\">".$i." </a>
-                
-                </li>
-                ";
-            }
 
-            $counter++;
-        }
-    
-        if ($page < $rowsperpage - ($limit/2))
-         { $link .=   "
-            
-            <li  class='page-item'> 
-            <a   class='page-link' >...</a>  <a   class='page-link'   href=\"?page=" .$rowsperpage.$this->url_vars ."\">".$rowsperpage." </a>
-            </li>
-            
-            "; }
-    }
-    echo $link;
-
-}
 public function paginate_links(){
         if(isset($_GET['page'])){
             $page=(int)$_GET['page'];
@@ -154,7 +167,7 @@ public function paginate_links(){
             /*  عدد الروابط في الصفحة في الصفحة    */$rowsperpage=$total_rows/$this->limit;
             $rowsperpage=ceil($rowsperpage);
             if(!isset($page)||$page==''||$page<1||$page>$rowsperpage){
-                $page=1;
+            $page=1;
             }
         
                 
@@ -168,7 +181,11 @@ public function paginate_links(){
     <!--prec btn -->  <?php   echo  $this->prev(); ?>
 
   
-    <?php    echo $this->links($rowsperpage);  ?>
+    <?php   /*  echo $this->links($rowsperpage);  */ 
+    echo $this->links($page,$rowsperpage,$this->page);
+    
+    
+    ?>
          
 
 
